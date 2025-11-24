@@ -1,7 +1,8 @@
 use petgraph::graph::{GraphIndex, UnGraph};
+use petgraph::graph::NodeIndex;
 use std::collections::HashSet;
 
-#[derive(PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
 enum Color {
     One,
     Two,
@@ -19,15 +20,15 @@ const COLORS: [Color; 9] = [Color::One, Color::Two, Color::Three, Color::Four, C
 struct Cell {
     value: Option<Color>,
     possible_values: HashSet<Color>,
-    graph_index: dyn GraphIndex,
+    graph_index: NodeIndex,
 }
 impl Cell {
-    fn new() -> Cell{
+    fn new(node_index: NodeIndex) -> Cell{
         let mut  colors_set: HashSet<Color> = HashSet::new();
         for color in COLORS{
             colors_set.insert(color);
         }
-        Cell { value: None, possible_values: colors_set, graph_index: 0 }
+        Cell { value: None, possible_values: colors_set, graph_index: node_index}
     }
 }
 struct SudokuBoard {
@@ -37,14 +38,14 @@ struct SudokuBoard {
 
 impl SudokuBoard {
     fn new() -> SudokuBoard{
-        let mut board: SudokuBoard = SudokuBoard { grid: [[Cell::new(); 9]; 9], constraints: UnGraph::new_undirected() };
-
-        for (i,row) in board.grid.iter().enumerate(){
-            for (j, colum) in row.iter().enumerate(){
-                board.grid[i][j].graph_index = board.constraints.add_node((i,j));
-            }
-        }
-        
+        let mut constraints: UnGraph<(usize, usize), ()> = UnGraph::new_undirected();
+        let mut grid:[[Cell; 9]; 9] = std::array::from_fn(|row| {
+            std::array::from_fn(|col| {
+                Cell::new(constraints.add_node((row,col))) ;
+            })
+        });
+        todo!();
+        SudokuBoard { grid, constraints }
     }
     
 }
