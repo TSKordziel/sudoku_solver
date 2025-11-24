@@ -1,4 +1,4 @@
-use petgraph::graph::UnGraph;
+use petgraph::graph::{GraphIndex, UnGraph};
 use std::collections::HashSet;
 
 #[derive(PartialEq, Eq, Hash)]
@@ -18,7 +18,8 @@ const COLORS: [Color; 9] = [Color::One, Color::Two, Color::Three, Color::Four, C
 
 struct Cell {
     value: Option<Color>,
-    possible_values: HashSet<Color>
+    possible_values: HashSet<Color>,
+    graph_index: dyn GraphIndex,
 }
 impl Cell {
     fn new() -> Cell{
@@ -26,7 +27,7 @@ impl Cell {
         for color in COLORS{
             colors_set.insert(color);
         }
-        Cell { value: None, possible_values: colors_set }
+        Cell { value: None, possible_values: colors_set, graph_index: 0 }
     }
 }
 struct SudokuBoard {
@@ -40,7 +41,7 @@ impl SudokuBoard {
 
         for (i,row) in board.grid.iter().enumerate(){
             for (j, colum) in row.iter().enumerate(){
-                board.constraints.add_node((i,j));
+                board.grid[i][j].graph_index = board.constraints.add_node((i,j));
             }
         }
         
