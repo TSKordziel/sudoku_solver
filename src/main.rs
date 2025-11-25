@@ -1,5 +1,5 @@
 use petgraph::graph::NodeIndex;
-use petgraph::graph::{GraphIndex, UnGraph};
+use petgraph::graph::UnGraph;
 use std::collections::HashSet;
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
@@ -74,7 +74,16 @@ impl SudokuBoard {
                 }
             }
         }
-
+        for block_row in 0..3 {
+            for block_col in 0..3 {
+                for row in (block_row * 3)..(block_row * 3 + 3) {
+                    for col in (block_col * 3)..(block_col * 3 + 3) {
+                        let node_index1 = grid[row][col].graph_index;
+                        todo!()
+                    }
+                }
+            }
+        }
         SudokuBoard { grid, constraints }
     }
 }
