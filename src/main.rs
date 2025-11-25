@@ -76,11 +76,21 @@ impl SudokuBoard {
         }
         for block_row in 0..3 {
             for block_col in 0..3 {
+                let mut nodes: Vec<NodeIndex> = Vec::new();
                 for row in (block_row * 3)..(block_row * 3 + 3) {
                     for col in (block_col * 3)..(block_col * 3 + 3) {
-                        let node_index1 = grid[row][col].graph_index;
-                        todo!()
+                        nodes.push(grid[row][col].graph_index);
                     }
+                }
+                for index_a in 0..9{
+                    for index_b in (index_a +1)..9{
+                        let node_index1 = nodes[index_a];
+                        let node_index2 = nodes[index_b];
+                        if constraints.find_edge(node_index1, node_index2).is_none(){
+                            constraints.add_edge(node_index1, node_index2, ());
+                        }
+                    }
+
                 }
             }
         }
@@ -89,5 +99,7 @@ impl SudokuBoard {
 }
 
 fn main() {
-    println!("Hello, world!");
+    let board = SudokuBoard::new();
+
+    println!("{:?}, {:?}", board.constraints.edge_count(), board.constraints.node_count());
 }
