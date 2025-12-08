@@ -1,5 +1,6 @@
 use petgraph::graph::NodeIndex;
 use petgraph::graph::UnGraph;
+use std::collections::hash_set;
 use std::collections::HashSet;
 use std::usize;
 
@@ -49,6 +50,7 @@ impl Cell {
 struct SudokuBoard {
     grid: [[Cell; 9]; 9],
     constraints: UnGraph<(usize, usize), ()>,
+    buckets: [HashSet<(usize, usize)>; 10],
 }
 
 impl SudokuBoard {
@@ -57,6 +59,13 @@ impl SudokuBoard {
         let mut grid: [[Cell; 9]; 9] = std::array::from_fn(|row| {
             std::array::from_fn(|col| Cell::new(constraints.add_node((row, col))))
         });
+        let mut buckets: [HashSet<(usize, usize)>; 10] = std::array::from_fn(|_| HashSet::new());
+        for (row, row_data) in grid.iter().enumerate() {
+            for (col, cell) in row_data.iter().enumerate() {
+                let num_cell_possible_values = cell.possible_values.len();
+                buckets[num_cell_possible_values].insert((row, col));
+            }
+        }
         for row in 0..9 {
             for c1 in 0..9 {
                 for c2 in (c1 + 1)..9 {
@@ -94,7 +103,11 @@ impl SudokuBoard {
                 }
             }
         }
-        SudokuBoard { grid, constraints }
+        SudokuBoard {
+            grid,
+            constraints,
+            buckets,
+        }
     }
     fn get_cell_constraint_neighbors(&self, gird_inexd: (usize, usize)) -> Vec<(usize, usize)> {
         let (row, col) = gird_inexd;
@@ -107,7 +120,61 @@ impl SudokuBoard {
                     (row, col)
                 }
             })
+            .filter(|&(cell_row, cell_col)| self.grid[cell_row][cell_col].value.is_some())
             .collect()
+    }
+    fn check_cell_neighbors(&mut self, gird_inexd: (usize, usize)) {
+        let (cel_row, cell_col) = gird_inexd;
+        for (row, col) in self.get_cell_constraint_neighbors((cel_row, cell_col)) {
+            match self.grid[row][col].value {
+                None => {}
+                Some(Color::One) => {
+                    self.grid[cel_row][cell_col]
+                        .possible_values
+                        .remove(&Color::One);
+                }
+                Some(Color::Two) => {
+                    self.grid[cel_row][cell_col]
+                        .possible_values
+                        .remove(&Color::Two);
+                }
+                Some(Color::Three) => {
+                    self.grid[cel_row][cell_col]
+                        .possible_values
+                        .remove(&Color::Three);
+                }
+                Some(Color::Four) => {
+                    self.grid[cel_row][cell_col]
+                        .possible_values
+                        .remove(&Color::Four);
+                }
+                Some(Color::Five) => {
+                    self.grid[cel_row][cell_col]
+                        .possible_values
+                        .remove(&Color::Five);
+                }
+                Some(Color::Six) => {
+                    self.grid[cel_row][cell_col]
+                        .possible_values
+                        .remove(&Color::Six);
+                }
+                Some(Color::Seven) => {
+                    self.grid[cel_row][cell_col]
+                        .possible_values
+                        .remove(&Color::Seven);
+                }
+                Some(Color::Eight) => {
+                    self.grid[cel_row][cell_col]
+                        .possible_values
+                        .remove(&Color::Eight);
+                }
+                Some(Color::Nine) => {
+                    self.grid[cel_row][cell_col]
+                        .possible_values
+                        .remove(&Color::Nine);
+                }
+            }
+        }
     }
 }
 
@@ -115,8 +182,6 @@ fn main() {
     let board = SudokuBoard::new();
     let neighbors = board.get_cell_constraint_neighbors((0, 0));
 
-    println!(
-        "{:?}",
-        neighbors
-    );
+    println!("{:?}", neighbors);
+    println!("{:?}", board.buckets[9].len());
 }
