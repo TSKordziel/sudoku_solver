@@ -1,6 +1,7 @@
 use petgraph::graph::NodeIndex;
 use petgraph::graph::UnGraph;
 use std::collections::HashSet;
+use std::usize;
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 enum Color {
@@ -82,24 +83,40 @@ impl SudokuBoard {
                         nodes.push(grid[row][col].graph_index);
                     }
                 }
-                for index_a in 0..9{
-                    for index_b in (index_a +1)..9{
+                for index_a in 0..9 {
+                    for index_b in (index_a + 1)..9 {
                         let node_index1 = nodes[index_a];
                         let node_index2 = nodes[index_b];
-                        if constraints.find_edge(node_index1, node_index2).is_none(){
+                        if constraints.find_edge(node_index1, node_index2).is_none() {
                             constraints.add_edge(node_index1, node_index2, ());
                         }
                     }
-
                 }
             }
         }
         SudokuBoard { grid, constraints }
     }
+    fn get_cell_constraint_neighbors(&self, gird_inexd: (usize, usize)) -> Vec<(usize, usize)> {
+        let (row, col) = gird_inexd;
+        self.constraints
+            .neighbors(self.grid[row][col].graph_index)
+            .map(|neighbor| {
+                if let Some(&index) = self.constraints.node_weight(neighbor) {
+                    index
+                } else {
+                    (row, col)
+                }
+            })
+            .collect()
+    }
 }
 
 fn main() {
     let board = SudokuBoard::new();
+    let neighbors = board.get_cell_constraint_neighbors((0, 0));
 
-    println!("{:?}, {:?}", board.constraints.edge_count(), board.constraints.node_count());
+    println!(
+        "{:?}",
+        neighbors
+    );
 }
