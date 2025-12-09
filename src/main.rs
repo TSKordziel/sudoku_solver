@@ -123,59 +123,6 @@ impl SudokuBoard {
             .filter(|&(cell_row, cell_col)| self.grid[cell_row][cell_col].value.is_some())
             .collect()
     }
-    fn check_cell_neighbors(&mut self, gird_inexd: (usize, usize)) {
-        let (cel_row, cell_col) = gird_inexd;
-        for (row, col) in self.get_cell_constraint_neighbors((cel_row, cell_col)) {
-            match self.grid[row][col].value {
-                None => {}
-                Some(Color::One) => {
-                    self.grid[cel_row][cell_col]
-                        .possible_values
-                        .remove(&Color::One);
-                }
-                Some(Color::Two) => {
-                    self.grid[cel_row][cell_col]
-                        .possible_values
-                        .remove(&Color::Two);
-                }
-                Some(Color::Three) => {
-                    self.grid[cel_row][cell_col]
-                        .possible_values
-                        .remove(&Color::Three);
-                }
-                Some(Color::Four) => {
-                    self.grid[cel_row][cell_col]
-                        .possible_values
-                        .remove(&Color::Four);
-                }
-                Some(Color::Five) => {
-                    self.grid[cel_row][cell_col]
-                        .possible_values
-                        .remove(&Color::Five);
-                }
-                Some(Color::Six) => {
-                    self.grid[cel_row][cell_col]
-                        .possible_values
-                        .remove(&Color::Six);
-                }
-                Some(Color::Seven) => {
-                    self.grid[cel_row][cell_col]
-                        .possible_values
-                        .remove(&Color::Seven);
-                }
-                Some(Color::Eight) => {
-                    self.grid[cel_row][cell_col]
-                        .possible_values
-                        .remove(&Color::Eight);
-                }
-                Some(Color::Nine) => {
-                    self.grid[cel_row][cell_col]
-                        .possible_values
-                        .remove(&Color::Nine);
-                }
-            }
-        }
-    }
 }
 
 fn main() {
