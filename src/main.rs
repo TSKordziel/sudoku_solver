@@ -109,8 +109,8 @@ impl SudokuBoard {
             buckets,
         }
     }
-    fn get_cell_constraint_neighbors(&self, gird_inexd: (usize, usize)) -> Vec<(usize, usize)> {
-        let (row, col) = gird_inexd;
+    fn get_cell_constraint_neighbors(&self, grid_index: (usize, usize)) -> Vec<(usize, usize)> {
+        let (row, col) = grid_index;
         self.constraints
             .neighbors(self.grid[row][col].graph_index)
             .map(|neighbor| {
@@ -122,6 +122,18 @@ impl SudokuBoard {
             })
             .filter(|&(cell_row, cell_col)| self.grid[cell_row][cell_col].value.is_some())
             .collect()
+    }
+    fn brodcast_cell_color_to_neighbors(&mut self, grid_index: (usize, usize)) {
+        let (cell_row, cell_col) = grid_index;
+        if let Some(color) = self.grid[cell_row][cell_col].value {
+            for (row, col) in self.get_cell_constraint_neighbors((cell_row, cell_col)) {
+                let old_count = self.grid[row][col].possible_values.len();
+                self.grid[row][col].possible_values.remove(&color);
+                let new_count = self.grid[row][col].possible_values.len();
+                self.buckets[old_count].remove(&(row, col));
+                self.buckets[new_count].insert((row, col));
+            }
+        }
     }
 }
 
