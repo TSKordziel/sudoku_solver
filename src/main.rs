@@ -56,7 +56,7 @@ struct SudokuBoard {
 impl SudokuBoard {
     fn new() -> SudokuBoard {
         let mut constraints: UnGraph<(usize, usize), ()> = UnGraph::new_undirected();
-        let mut grid: [[Cell; 9]; 9] = std::array::from_fn(|row| {
+        let grid: [[Cell; 9]; 9] = std::array::from_fn(|row| {
             std::array::from_fn(|col| Cell::new(constraints.add_node((row, col))))
         });
         let mut buckets: [HashSet<(usize, usize)>; 10] = std::array::from_fn(|_| HashSet::new());
@@ -135,12 +135,25 @@ impl SudokuBoard {
             }
         }
     }
+    fn set_cell_color(&mut self, grid_index: (usize, usize), color: Color) {
+        let (cell_row, cell_col) = grid_index;
+        self.grid[cell_row][cell_col].value = Some(color);
+        let old_count = self.grid[cell_row][cell_col].possible_values.len();
+        let new_count: usize = 1;
+        self.buckets[old_count].remove(&(cell_row, cell_col));
+        self.buckets[new_count].insert((cell_row, cell_col));
+        self.brodcast_cell_color_to_neighbors((cell_row, cell_col));
+    }
 }
 
 fn main() {
-    let board = SudokuBoard::new();
+    let mut board = SudokuBoard::new();
+
+    board.set_cell_color((0, 0), Color::One);
+    board.set_cell_color((0, 8), Color::Two);
+
     let neighbors = board.get_cell_constraint_neighbors((0, 0));
 
     println!("{:?}", neighbors);
-    println!("{:?}", board.buckets[9].len());
+    println!("{:?}, ", board.buckets[9].len());
 }
