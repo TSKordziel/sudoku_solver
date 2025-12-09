@@ -170,7 +170,8 @@ impl SudokuBoard {
         let (cell_row, cell_col) = grid_index;
         self.grid[cell_row][cell_col].value = Some(color);
         let old_count = self.grid[cell_row][cell_col].possible_values.len();
-        let new_count: usize = 1;
+        self.grid[cell_row][cell_col].possible_values.clear();
+        let new_count: usize = self.grid[cell_row][cell_col].possible_values.len();
         self.buckets[old_count].remove(&(cell_row, cell_col));
         self.buckets[new_count].insert((cell_row, cell_col));
         self.brodcast_cell_color_to_neighbors((cell_row, cell_col));
@@ -195,5 +196,5 @@ fn main() {
     let neighbors = board.get_cell_constraint_neighbors((0, 0));
 
     println!("{:?}", neighbors);
-    println!("{:?}, ", board.buckets[9].len());
+    println!("{:?}, {:?}, {:?}, {:?}", board.buckets[9].len(), board.buckets[8].len(), board.buckets[7].len() , board.buckets[0].len());
 }
