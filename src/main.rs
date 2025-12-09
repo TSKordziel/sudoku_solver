@@ -4,6 +4,8 @@ use std::collections::hash_set;
 use std::collections::HashSet;
 use std::usize;
 
+const TEST_PUZZLE: [[Option<Color>; 9]; 9] = [[], [], [], [], [], [], [], [], []];
+
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 enum Color {
     One,
@@ -143,6 +145,15 @@ impl SudokuBoard {
         self.buckets[old_count].remove(&(cell_row, cell_col));
         self.buckets[new_count].insert((cell_row, cell_col));
         self.brodcast_cell_color_to_neighbors((cell_row, cell_col));
+    }
+    fn initialize_board_colors(&mut self, puzzle: [[Option<Color>; 9]; 9]) {
+        for (row, row_data) in puzzle.iter().enumerate() {
+            for (col, &puzzle_cell) in row_data.iter().enumerate() {
+                if let Some(color) = puzzle_cell {
+                    self.set_cell_color((row, col), color);
+                }
+            }
+        }
     }
 }
 
