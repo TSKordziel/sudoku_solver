@@ -4,7 +4,7 @@ use std::collections::hash_set;
 use std::collections::HashSet;
 use std::usize;
 
-const TEST_PUZZLE: [[Option<Color>; 9]; 9] = [
+/* const TEST_PUZZLE: [[Option<Color>; 9]; 9] = [
     [
         None,
         Some(Color::Six),
@@ -34,7 +34,7 @@ const TEST_PUZZLE: [[Option<Color>; 9]; 9] = [
     [],
     [],
     [],
-];
+]; */
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 enum Color {
@@ -152,7 +152,6 @@ impl SudokuBoard {
                     (row, col)
                 }
             })
-            .filter(|&(cell_row, cell_col)| self.grid[cell_row][cell_col].value.is_some())
             .collect()
     }
     fn brodcast_cell_color_to_neighbors(&mut self, grid_index: (usize, usize)) {
