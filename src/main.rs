@@ -4,7 +4,37 @@ use std::collections::hash_set;
 use std::collections::HashSet;
 use std::usize;
 
-const TEST_PUZZLE: [[Option<Color>; 9]; 9] = [[], [], [], [], [], [], [], [], []];
+const TEST_PUZZLE: [[Option<Color>; 9]; 9] = [
+    [
+        None,
+        Some(Color::Six),
+        None,
+        Some(Color::Three),
+        Some(Color::Seven),
+        Some(Color::Eight),
+        None,
+        None,
+        Some(Color::Five),
+    ],
+    [
+        None,
+        None,
+        Some(Color::Four),
+        None,
+        None,
+        Some(Color::One),
+        Some(Color::Nine),
+        Some(Color::Two),
+        None,
+    ],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+];
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 enum Color {
