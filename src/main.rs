@@ -192,11 +192,30 @@ impl SudokuBoard {
             }
         }
     }
+    fn set_hanging_singles(&mut self) {
+        loop {
+            let singles: Vec<_> = self.buckets[1].iter().copied().collect();
+            if singles.is_empty() {
+                break;
+            }
+            for cell in singles {
+                let (row, col) = cell;
+                if let Some(&color) = self.grid[row][col].possible_values.iter().next() {
+                    self.set_cell_color(cell, color);
+                }
+            }
+        }
+    }
 }
 
 fn main() {
     let mut board = SudokuBoard::new();
+    let counts_1: [usize; 10] = std::array::from_fn(|index| board.buckets[index].len());
+
+    println!("{:?}", counts_1);
+
     board.initialize_board_colors(TEST_PUZZLE);
+    board.set_hanging_singles();
     let counts_1: [usize; 10] = std::array::from_fn(|index| board.buckets[index].len());
 
     println!("{:?}", counts_1);
