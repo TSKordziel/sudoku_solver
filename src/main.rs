@@ -4,37 +4,17 @@ use std::collections::hash_set;
 use std::collections::HashSet;
 use std::usize;
 
-/* const TEST_PUZZLE: [[Option<Color>; 9]; 9] = [
-    [
-        None,
-        Some(Color::Six),
-        None,
-        Some(Color::Three),
-        Some(Color::Seven),
-        Some(Color::Eight),
-        None,
-        None,
-        Some(Color::Five),
-    ],
-    [
-        None,
-        None,
-        Some(Color::Four),
-        None,
-        None,
-        Some(Color::One),
-        Some(Color::Nine),
-        Some(Color::Two),
-        None,
-    ],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-]; */
+const TEST_PUZZLE: [[&str; 9]; 9] = [
+    ["5", "3", ".", ".", "7", ".", ".", ".", "."],
+    ["6", ".", ".", "1", "9", "5", ".", ".", "."],
+    [".", "9", "8", ".", ".", ".", ".", "6", "."],
+    ["8", ".", ".", ".", "6", ".", ".", ".", "3"],
+    ["4", ".", ".", "8", ".", "3", ".", ".", "1"],
+    ["7", ".", ".", ".", "2", ".", ".", ".", "6"],
+    [".", "6", ".", ".", ".", ".", "2", "8", "."],
+    [".", ".", ".", "4", "1", "9", ".", ".", "5"],
+    [".", ".", ".", ".", "8", ".", ".", "7", "9"],
+];
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 enum Color {
@@ -176,11 +156,38 @@ impl SudokuBoard {
         self.buckets[new_count].insert((cell_row, cell_col));
         self.brodcast_cell_color_to_neighbors((cell_row, cell_col));
     }
-    fn initialize_board_colors(&mut self, puzzle: [[Option<Color>; 9]; 9]) {
+    fn initialize_board_colors(&mut self, puzzle: [[&str; 9]; 9]) {
         for (row, row_data) in puzzle.iter().enumerate() {
             for (col, &puzzle_cell) in row_data.iter().enumerate() {
-                if let Some(color) = puzzle_cell {
-                    self.set_cell_color((row, col), color);
+                match puzzle_cell {
+                    "1" => {
+                        self.set_cell_color((row, col), Color::One);
+                    }
+                    "2" => {
+                        self.set_cell_color((row, col), Color::Two);
+                    }
+                    "3" => {
+                        self.set_cell_color((row, col), Color::Three);
+                    }
+                    "4" => {
+                        self.set_cell_color((row, col), Color::Four);
+                    }
+                    "5" => {
+                        self.set_cell_color((row, col), Color::Five);
+                    }
+                    "6" => {
+                        self.set_cell_color((row, col), Color::Six);
+                    }
+                    "7" => {
+                        self.set_cell_color((row, col), Color::Seven);
+                    }
+                    "8" => {
+                        self.set_cell_color((row, col), Color::Eight);
+                    }
+                    "9" => {
+                        self.set_cell_color((row, col), Color::Nine);
+                    }
+                    _ => {}
                 }
             }
         }
@@ -189,12 +196,8 @@ impl SudokuBoard {
 
 fn main() {
     let mut board = SudokuBoard::new();
+    board.initialize_board_colors(TEST_PUZZLE);
+    let counts_1: [usize; 10] = std::array::from_fn(|index| board.buckets[index].len());
 
-    board.set_cell_color((0, 0), Color::One);
-    board.set_cell_color((0, 8), Color::Two);
-
-    let neighbors = board.get_cell_constraint_neighbors((0, 0));
-
-    println!("{:?}", neighbors);
-    println!("{:?}, {:?}, {:?}, {:?}", board.buckets[9].len(), board.buckets[8].len(), board.buckets[7].len() , board.buckets[0].len());
+    println!("{:?}", counts_1);
 }
