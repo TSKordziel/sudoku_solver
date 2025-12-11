@@ -40,7 +40,7 @@ const COLORS: [Color; 9] = [
     Color::Eight,
     Color::Nine,
 ];
-
+#[derive(Clone)]
 struct Cell {
     value: Option<Color>,
     possible_values: HashSet<Color>,
@@ -59,6 +59,8 @@ impl Cell {
         }
     }
 }
+
+#[derive(Clone)]
 struct SudokuBoard {
     grid: [[Cell; 9]; 9],
     constraints: UnGraph<(usize, usize), ()>,
@@ -205,6 +207,36 @@ impl SudokuBoard {
                 }
             }
         }
+    }
+    fn is_complete(&self) -> bool {
+        self.grid
+            .iter()
+            .all(|row| row.iter().all(|cell| cell.value.is_some()))
+    }
+    fn has_contadiction(&self) -> bool {
+        for row in 0..9 {
+            for col in 0..9 {
+                let cell = &self.grid[row][col];
+                if cell.value.is_none() && cell.possible_values.is_empty() {
+                    return true;
+                }
+            }
+        }
+        false
+    }
+    /// Choose an unassigned cell with the fewest remaining values (MRV heuristic).
+    fn select_unassigned_cell(&self) -> Option<(usize, usize)> {
+        // Buckets: index = number of possible values.
+        // We only care about cells with 2..=9 possible values.
+        for count in 2..9 {
+            if let Some(&cell) = self.buckets[count].iter().next() {
+                return Some(cell);
+            }
+        }
+        // If we see no cells with 2+ candidates, either:
+        // - puzzle is complete (handled by is_complete), or
+        // - everything left is broken, handled by has_contradiction.
+        None
     }
 }
 
