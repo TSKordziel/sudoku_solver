@@ -238,6 +238,46 @@ impl SudokuBoard {
         // - everything left is broken, handled by has_contradiction.
         None
     }
+    fn solve(&mut self) -> bool {
+        self.set_hanging_singles();
+
+        if self.has_contadiction() {
+            return false;
+        }
+
+        if self.is_complete() {
+            return true;
+        }
+
+        let (row, col) = match self.select_unassigned_cell() {
+            Some(cell) => cell,
+            None => {
+                // No candidate cell but not complete/contradiction:
+                // should be unreachable if buckets are correct.
+                return false;
+            }
+        };
+
+        let cantidates: Vec<Color> = self.grid[row][col]
+            .possible_values
+            .iter()
+            .copied()
+            .collect();
+
+        for color in cantidates {
+            let mut next_board = self.clone();
+            next_board.set_cell_color((row, col), color);
+
+            if next_board.solve() {
+                // Found a solution in this branch — overwrite self.
+                *self = next_board;
+                return true;
+            }
+            // Otherwise, this color leads to a contradiction; try the next one.
+        }
+        // All candidates failed.
+        false
+    }
 }
 
 fn main() {
