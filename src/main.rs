@@ -265,28 +265,52 @@ impl SudokuBoard {
         // All candidates failed.
         false
     }
+    fn print(&self) {
+        for row in 0..9 {
+            for col in 0..9 {
+                let ch = match self.grid[row][col].value {
+                    Some(Color::One) => '1',
+                    Some(Color::Two) => '2',
+                    Some(Color::Three) => '3',
+                    Some(Color::Four) => '4',
+                    Some(Color::Five) => '5',
+                    Some(Color::Six) => '6',
+                    Some(Color::Seven) => '7',
+                    Some(Color::Eight) => '8',
+                    Some(Color::Nine) => '9',
+                    None => '.',
+                };
+                print!("{ch} ");
+            }
+            println!();
+        }
+    }
 }
 
 fn main() {
     let test_puzzle: Vec<Vec<char>> = vec![
-        vec!['5', '3', '.', '.', '7', '.', '.', '.', '.'],
-        vec!['6', '.', '.', '1', '9', '5', '.', '.', '.'],
-        vec!['.', '9', '8', '.', '.', '.', '.', '6', '.'],
-        vec!['8', '.', '.', '.', '6', '.', '.', '.', '3'],
-        vec!['4', '.', '.', '8', '.', '3', '.', '.', '1'],
-        vec!['7', '.', '.', '.', '2', '.', '.', '.', '6'],
-        vec!['.', '6', '.', '.', '.', '.', '2', '8', '.'],
-        vec!['.', '.', '.', '4', '1', '9', '.', '.', '5'],
-        vec!['.', '.', '.', '.', '8', '.', '.', '7', '9'],
+        vec!['.', '.', '.', '.', '.', '.', '.', '7', '.'],
+        vec!['.', '9', '.', '3', '.', '.', '.', '1', '.'],
+        vec!['6', '.', '7', '.', '.', '.', '.', '.', '2'],
+        vec!['.', '.', '2', '.', '5', '.', '9', '.', '.'],
+        vec!['.', '.', '3', '.', '.', '4', '.', '5', '.'],
+        vec!['.', '5', '.', '6', '.', '.', '.', '.', '.'],
+        vec!['.', '.', '.', '.', '4', '.', '.', '.', '.'],
+        vec!['7', '8', '1', '2', '.', '.', '6', '.', '.'],
+        vec!['.', '3', '.', '.', '.', '7', '.', '8', '.'],
     ];
     let mut board = SudokuBoard::new();
-    let counts_1: [usize; 10] = std::array::from_fn(|index| board.buckets[index].len());
-
-    println!("{:?}", counts_1);
-
     board.initialize_board_colors(test_puzzle);
-    board.solve();
     let counts_1: [usize; 10] = std::array::from_fn(|index| board.buckets[index].len());
 
-    println!("{:?}", counts_1);
+    println!("{:?} \n", counts_1);
+
+    board.print();
+
+    board.solve();
+    println!();
+    let counts_1: [usize; 10] = std::array::from_fn(|index| board.buckets[index].len());
+
+    println!("{:?} \n", counts_1);
+    board.print();
 }
