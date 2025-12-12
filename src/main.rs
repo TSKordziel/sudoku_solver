@@ -1,20 +1,7 @@
 use petgraph::graph::NodeIndex;
 use petgraph::graph::UnGraph;
-use std::collections::hash_set;
 use std::collections::HashSet;
 use std::usize;
-
-const TEST_PUZZLE: [[&str; 9]; 9] = [
-    ["5", "3", ".", ".", "7", ".", ".", ".", "."],
-    ["6", ".", ".", "1", "9", "5", ".", ".", "."],
-    [".", "9", "8", ".", ".", ".", ".", "6", "."],
-    ["8", ".", ".", ".", "6", ".", ".", ".", "3"],
-    ["4", ".", ".", "8", ".", "3", ".", ".", "1"],
-    ["7", ".", ".", ".", "2", ".", ".", ".", "6"],
-    [".", "6", ".", ".", ".", ".", "2", "8", "."],
-    [".", ".", ".", "4", "1", "9", ".", ".", "5"],
-    [".", ".", ".", ".", "8", ".", ".", "7", "9"],
-];
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 enum Color {
@@ -158,35 +145,35 @@ impl SudokuBoard {
         self.buckets[new_count].insert((cell_row, cell_col));
         self.brodcast_cell_color_to_neighbors((cell_row, cell_col));
     }
-    fn initialize_board_colors(&mut self, puzzle: [[&str; 9]; 9]) {
+    fn initialize_board_colors(&mut self, puzzle: Vec<Vec<char>>) {
         for (row, row_data) in puzzle.iter().enumerate() {
             for (col, &puzzle_cell) in row_data.iter().enumerate() {
                 match puzzle_cell {
-                    "1" => {
+                    '1' => {
                         self.set_cell_color((row, col), Color::One);
                     }
-                    "2" => {
+                    '2' => {
                         self.set_cell_color((row, col), Color::Two);
                     }
-                    "3" => {
+                    '3' => {
                         self.set_cell_color((row, col), Color::Three);
                     }
-                    "4" => {
+                    '4' => {
                         self.set_cell_color((row, col), Color::Four);
                     }
-                    "5" => {
+                    '5' => {
                         self.set_cell_color((row, col), Color::Five);
                     }
-                    "6" => {
+                    '6' => {
                         self.set_cell_color((row, col), Color::Six);
                     }
-                    "7" => {
+                    '7' => {
                         self.set_cell_color((row, col), Color::Seven);
                     }
-                    "8" => {
+                    '8' => {
                         self.set_cell_color((row, col), Color::Eight);
                     }
-                    "9" => {
+                    '9' => {
                         self.set_cell_color((row, col), Color::Nine);
                     }
                     _ => {}
@@ -281,13 +268,24 @@ impl SudokuBoard {
 }
 
 fn main() {
+    let test_puzzle: Vec<Vec<char>> = vec![
+        vec!['5', '3', '.', '.', '7', '.', '.', '.', '.'],
+        vec!['6', '.', '.', '1', '9', '5', '.', '.', '.'],
+        vec!['.', '9', '8', '.', '.', '.', '.', '6', '.'],
+        vec!['8', '.', '.', '.', '6', '.', '.', '.', '3'],
+        vec!['4', '.', '.', '8', '.', '3', '.', '.', '1'],
+        vec!['7', '.', '.', '.', '2', '.', '.', '.', '6'],
+        vec!['.', '6', '.', '.', '.', '.', '2', '8', '.'],
+        vec!['.', '.', '.', '4', '1', '9', '.', '.', '5'],
+        vec!['.', '.', '.', '.', '8', '.', '.', '7', '9'],
+    ];
     let mut board = SudokuBoard::new();
     let counts_1: [usize; 10] = std::array::from_fn(|index| board.buckets[index].len());
 
     println!("{:?}", counts_1);
 
-    board.initialize_board_colors(TEST_PUZZLE);
-    board.set_hanging_singles();
+    board.initialize_board_colors(test_puzzle);
+    board.solve();
     let counts_1: [usize; 10] = std::array::from_fn(|index| board.buckets[index].len());
 
     println!("{:?}", counts_1);
