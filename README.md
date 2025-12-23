@@ -6,6 +6,20 @@ The solver aggressively prunes the search space using “hanging singles,” can
 
 ---
 
+## 🎯 Project Purpose
+
+This project was built with two deliberate learning objectives:
+
+1. **Develop a deep, practical understanding of graph data structures**  
+   The Sudoku board is modeled explicitly as a graph, forcing all relationships—rows, columns, and subgrids—to be expressed through edges and neighbor traversal rather than ad-hoc indexing. This approach emphasizes thinking in terms of connectivity, adjacency, and propagation, not just arrays.
+
+2. **Implement a depth-first search algorithm via backtracking on graph-based state**  
+   The solver applies a recursive DFS strategy (backtracking) over the graph, exploring candidate assignments while safely isolating state through cloning. Constraint propagation acts as an early-exit mechanism, dramatically reducing the DFS search space.
+
+The goal was not merely to “solve Sudoku,” but to use a familiar problem to internalize graph-driven modeling and backtracking search patterns that generalize to far more complex constraint-satisfaction problems.
+
+---
+
 ## ✨ Features
 
 - **Graph-Modeled Sudoku Board**
